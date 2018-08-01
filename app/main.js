@@ -1,0 +1,1 @@
+import page1 from './page1/main.js'
