@@ -1,51 +1,60 @@
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-var fs = require('fs')
+var deleteFolderRecursive = require('./tools/rm')
 
-var deleteFolderRecursive = function(path) { // 递归删除文件夹下文件的方法
-    var files = [];
-    if( fs.existsSync(path) ) {
-        files = fs.readdirSync(path);
-        files.forEach(function(file,index){
-            var curPath = path + "/" + file;
-            if(fs.statSync(curPath).isDirectory()) { // recurse
-                deleteFolderRecursive(curPath);
-            } else { // delete file
-                fs.unlinkSync(curPath);
-            }
-        });
-        fs.rmdirSync(path);
-    }
-};
+deleteFolderRecursive('./public') // 删除public文件夹
+console.log('has been delete')
 
-deleteFolderRecursive('./public')
-console.log('delete')
+var appJson = require('./app/app.json')
+var entry = appJson.pages
+console.log(entry[0])
 
 module.exports = {
-    mode:'production',
-    devtool: 'source-map',
-    entry: __dirname + "/app/main.js",
-    output: {
-        path: __dirname + '/public',
-        filename: "bundle.js"
-    },
-    module: {
-        rules: [
-            {
-                test:/\.html$/,
-                use:'html-loader',
-            },
-            { 
-                test: /\.css$/, 
-                use: [
-                    'style-loader',
-                    'css-loader',
-                ]
-            },
+  mode: 'development',
+  devtool: 'source-map',
+  entry: [
+    __dirname + "/app/app.js",
+    __dirname + "/app/config.js"
+  ],
+  output: {
+    path: __dirname + '/public',
+    filename: "bundle.js"
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules)/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[path][name].[ext]'
+            }
+          },
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env']
+            }
+          }
+          ]
+      },
+      {
+        test: /\.html$/,
+        use: 'html-loader',
+      },
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader',
         ]
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template:'./app/page1/index.html',
-        })
-    ],
+      },
+    ]
+  },
+  plugins: [
+    // new HtmlWebpackPlugin({
+    //     template:'./app/page1/index.html',
+    // })
+  ],
 }
