@@ -1,34 +1,34 @@
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var deleteFolderRecursive = require('./rm')
 var webpack = require('webpack')
+var path = require('path')
 
-deleteFolderRecursive('./public') // 删除public文件夹
+deleteFolderRecursive(path.resolve(__dirname, '..','public')) // 删除public文件夹
 console.log('has been delete')
 
-var appJson = require('../app/app.json')
+var appJson = require(path.resolve(__dirname, '..','app','app.json'))
 var entry = appJson.pages
+console.log(entry)
 entry = ['app']
 function parseEntry(arr){
   var name = ''
   var itemArr=[]
   var obj = {}
   arr.forEach(function(item){
-    obj['/' + item] = __dirname+ '/app/'+item+'.js'
-  });
-  obj['/app']=__dirname+ '/app/app.js'
+    obj['/' + item] =path.resolve(__dirname, '..','app',item+'.js')
+    obj['/app']=path.resolve(__dirname, '..','app','app.js')
+  })
   return obj
 }
 console.log(parseEntry(entry))
 
-
-console.log(__dirname)
 webpack({
     mode: 'development',
     // devtool: 'source-map',
     devtool: false,
     entry: parseEntry(entry),
     output: {
-      path: __dirname + '/public',
+      path: path.resolve(__dirname, '..','public'),
       filename: "[name].js"
     },
     module: {
