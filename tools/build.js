@@ -10,6 +10,7 @@ console.log('has been delete')
 var appJson = require(path.resolve(__dirname, '..','app','app.json'))
 var entry = appJson.pages
 console.log(entry)
+
 // function parseEntry(arr){
 //   var name = ''
 //   var itemArr=[]
